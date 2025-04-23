@@ -1,6 +1,5 @@
 import { load } from "cheerio";
 import { AnimekaiDecoder } from "./clean/extractor.js";
-// import AnimekaiDecoder from "./decoder.js";
 import { AnimakaiTest } from "./clean/test.js";
 
 const headers = {

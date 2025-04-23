@@ -1,37 +1,17 @@
 //! https://hydrahd.me/
+//? "https://vidsrc.vip/hydrax.php?id=" + id ==> iframe
 const hydrogen = (id) => {
-  const map = "abcdefghij";
-  return id
-    .toLowerCase()
+  let C = id
+    .toString()
     .split("")
-    .map((char) => map[char] || char)
-    .reverse()
+    .map((digit) => "abcdefghij"[parseInt(digit)])
     .join("");
+  return btoa(btoa(C.split("").reverse().join("")));
 };
 const getSource = async (id) => {
   const relieovo = hydrogen(id);
+  const urlovo = `https://api2.vidsrc.vip/movie/${relieovo}`;
 
-  const urlovo = await (
-    await fetch("https://vidsrc.vip/hydrax.php?id=" + id, {
-      headers: {
-        Referer: "https://vidsrc.vip/",
-      },
-    })
-  )
-    .text()
-    .then((r) => {
-      // console.log(r);
-
-      return eval(r.match(/const\s+urlovo\s*=\s*(`.*?`);/)[1]);
-    });
-
-  const resp = await (
-    await fetch(urlovo, {
-      headers: {
-        Referer: "https://vidsrc.vip/",
-      },
-    })
-  ).text();
   const response = await Promise.all([
     (await fetch("https://vid3c.site/subfetch.php?id=" + id)).json(),
     (
@@ -42,17 +22,20 @@ const getSource = async (id) => {
       })
     ).json(),
   ]);
-
-  const data = {
-    sources: Object.values(response[1])
-      .filter((value, _) => value != null && value.length > 0)
-      .map((e) => ({
-        url: e,
-        type: e.includes("m3u8") ? "application/x-mpegURL" : "video/mp4",
-      })),
-    captions: response[0],
-  };
-  console.log(data);
+  const sources = Object.entries(response[1])
+    .filter(
+      ([key, value]) => value && value.url && value.url.startsWith("https")
+    )
+    .map(([key, value]) => ({
+      label: key,
+      file: value.url,
+      language: value.language,
+      flag: value.flag,
+    }));
+  console.log({
+    sources,
+    subtitles: response[0],
+  });
 };
 
 getSource("912649");

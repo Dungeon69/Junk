@@ -29,7 +29,9 @@ const makePost = async (getPlay) => {
 const main = async () => {
   const getEmbed = await makeRequest(
     baseUrl + "getEmbed.php?id=242794&sv=warezcdn&lang=1"
-  ).then((resp) => resp.match(/<iframe.*?src\s*=\s*['"](.*?)['"]/)[1]);
+  ).then((resp) => resp);
+
+  console.log(getEmbed);
 
   const getPlay = await makeRequest(
     getEmbed.startsWith("http") ? getEmbed : baseUrl + getEmbed
